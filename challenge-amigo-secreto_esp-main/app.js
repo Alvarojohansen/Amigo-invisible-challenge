@@ -1,13 +1,12 @@
-// El principal objetivo de este desafío es fortalecer tus habilidades en lógica de programación. Aquí deberás desarrollar la lógica para resolver el problema.
 let amigos = [];
+let amigosSorteados = new Set(); // Para rastrear los sorteados
 
 const agregarAmigo = () => {
   const inputNombre = document.getElementById("amigo");
-  const listaAmigos = document.getElementById("listaAmigos");
-  const mensajeError = document.getElementById("mensajeError");
-  const nombre = inputNombre.value.trim();
 
-  // Restablecer estilos y mensajes
+  const mensajeError = document.getElementById("mensajeError");
+  const nombre = inputNombre.value.trim().toLowerCase(); // Normalizar texto
+
   inputNombre.classList.remove("input-error", "input-success");
   mensajeError.textContent = "";
 
@@ -22,19 +21,57 @@ const agregarAmigo = () => {
     inputNombre.classList.add("input-error");
     return;
   }
+
   amigos.push(nombre);
-
-  const nuevoElemento = document.createElement("li");
-  nuevoElemento.textContent = nombre;
-  listaAmigos.appendChild(nuevoElemento);
-
-  console.log(`Amigo agregado: ${nombre}`);
-
+  actualizarLista();
   inputNombre.classList.add("input-success");
   inputNombre.value = ""; // Limpiar input
-  console.log(amigos);
 };
 
-const sortearAmigo =() =>{
-    //Falta terminar parte de sorteo de amigo invisible
-}
+const eliminarAmigo = (nombre) => {
+  amigos = amigos.filter((amigo) => amigo !== nombre);
+  amigosSorteados.delete(nombre);
+  actualizarLista();
+};
+
+const sortearAmigo = () => {
+  const amigosDisponibles = amigos.filter(
+    (amigo) => !amigosSorteados.has(amigo)
+  );
+
+  if (amigosDisponibles.length === 0) {
+    document.getElementById(
+      "resultado"
+    ).innerHTML = `<li>⚠️ Ya se sortearon todos los amigos.</li>`;
+    return;
+  }
+
+  const indiceAleatorio = Math.floor(Math.random() * amigosDisponibles.length);
+  const amigoSorteado = amigosDisponibles[indiceAleatorio];
+
+  amigosSorteados.add(amigoSorteado);
+
+  const resultadoLista = document.getElementById("resultado");
+  resultadoLista.innerHTML = `<li>🎉 Amigo sorteado: ${amigoSorteado}</li>`;
+};
+
+const actualizarLista = () => {
+  const listaAmigos = document.getElementById("listaAmigos");
+  listaAmigos.innerHTML = "";
+
+  amigos.forEach((nombre) => {
+    const nuevoElemento = document.createElement("li");
+    nuevoElemento.textContent = nombre;
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.textContent = "❌";
+    btnEliminar.classList.add("btn-eliminar");
+    btnEliminar.onclick = () => eliminarAmigo(nombre);
+
+    nuevoElemento.appendChild(btnEliminar);
+    listaAmigos.appendChild(nuevoElemento);
+  });
+};
+
+// Inicializar la lista cuando se carga la página
+document.addEventListener("DOMContentLoaded", actualizarLista);

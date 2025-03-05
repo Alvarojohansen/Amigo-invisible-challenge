@@ -124,6 +124,14 @@ button {
 .button-add:hover {
   background-color: #a1a1a1;
 }
+button.btn-eliminar {
+  font-size: 12px; /* Tamaño más pequeño */
+  padding: 2px 5px; /* Reducir espacio interno */
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: red;
+}
 
 /* Listas */
 ul {
